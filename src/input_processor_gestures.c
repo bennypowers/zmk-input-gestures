@@ -69,6 +69,12 @@ static const struct zmk_input_processor_driver_api gestures_driver_api = {
 };
 
 
+#if DT_NODE_EXISTS(DT_NODELABEL(glidepoint))
+#define GESTURES_PM_DEVICE (struct pm_device *)DEVICE_DT_GET(DT_NODELABEL(glidepoint))
+#else
+#define GESTURES_PM_DEVICE NULL
+#endif
+
 #define GESTURES_INST(n)                                                                                    \
     static struct gesture_data gesture_data_##n = {                                                         \
     };                                                                                                      \
@@ -101,7 +107,7 @@ static const struct zmk_input_processor_driver_api gestures_driver_api = {
         .circular_scroll = circular_scroll_config_##n,                                                      \
         .inertial_cursor = inertial_cursor_config_##n,                                                      \
     };                                                                                                      \
-    DEVICE_DT_INST_DEFINE(n, gestures_init, NULL, &gesture_data_##n,                    \
+    DEVICE_DT_INST_DEFINE(n, gestures_init, GESTURES_PM_DEVICE, &gesture_data_##n,                    \
                           &gesture_config_##n, POST_KERNEL, CONFIG_INPUT_GESTURES_INIT_PRIORITY,            \
                           &gestures_driver_api);
 
