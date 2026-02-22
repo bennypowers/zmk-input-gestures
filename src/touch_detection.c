@@ -41,9 +41,20 @@ int touch_detection_handle_event(const struct device *dev, struct input_event *e
     }
 
     if (! data->touch_detection.complete) {
-        // is this true? 
-        // because sometimes we might not want to forward half the events!
-        // for example when waiting during a tap or while a scroll is happening
+        data->touch_detection.previous_event = event;
+
+        // When circular scroll is tracking, suppress cursor movement for
+        // the first event of each pair.  Convert it to a zero-delta
+        // relative event so downstream processors don't move the cursor.
+        if (data->circular_scroll.is_tracking) {
+            if (event->code == INPUT_ABS_X || event->code == INPUT_REL_X) {
+                event->code = INPUT_REL_X;
+            } else {
+                event->code = INPUT_REL_Y;
+            }
+            event->type = INPUT_EV_REL;
+            event->value = 0;
+        }
         return ZMK_INPUT_PROC_CONTINUE;
     }
 
