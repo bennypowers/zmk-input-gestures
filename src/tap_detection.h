@@ -18,6 +18,7 @@ struct tap_detection_config {
     const bool enabled;
     const bool prevent_movement_during_tap;
     const uint8_t tap_timout_ms;
+    const int right_click_layer;
 };
 
 handle_init_t tap_detection_init;

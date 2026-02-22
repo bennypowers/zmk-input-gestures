@@ -8,6 +8,7 @@
  #include <zephyr/logging/log.h>
  #include <zmk/endpoints.h>
  #include <zmk/hid.h>
+ #include <zmk/keymap.h>
  #include "input_processor_gestures.h"
  
  LOG_MODULE_DECLARE(gestures, CONFIG_ZMK_LOG_LEVEL);
@@ -64,10 +65,18 @@
      struct tap_detection_data *data = CONTAINER_OF(d_work, struct tap_detection_data, tap_timeout_work);
      data->is_waiting_for_tap = false;
      if (!data->all->touch_detection.touching) {
-         LOG_DBG("tap detected - sending button presses");
-         zmk_hid_mouse_button_press(0);
+         const struct gesture_config *config = (const struct gesture_config *)data->all->dev->config;
+         int right_click_layer = config->tap_detection.right_click_layer;
+         uint8_t button = 0; /* left click */
+         if (right_click_layer >= 0 && zmk_keymap_layer_active((uint8_t)right_click_layer)) {
+             button = 1; /* right click */
+             LOG_DBG("tap detected on layer %d - sending right-click", right_click_layer);
+         } else {
+             LOG_DBG("tap detected - sending left-click");
+         }
+         zmk_hid_mouse_button_press(button);
          zmk_endpoints_send_mouse_report();
-         zmk_hid_mouse_button_release(0);
+         zmk_hid_mouse_button_release(button);
          zmk_endpoints_send_mouse_report();
      } else {
          LOG_DBG("time expired but touch is ongoing - it's not a tap");

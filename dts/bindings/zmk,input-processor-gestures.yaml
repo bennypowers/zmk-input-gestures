@@ -96,6 +96,14 @@ properties:
       to activate.
       The default value is a good compromise that works for me.
 
+  tap-right-click-layer:
+    type: int
+    default: -1
+    description: |
+      When set to a layer number (>= 0), tapping the touchpad while that layer
+      is active will produce a right-click (button 1) instead of a left-click
+      (button 0).  The default value of -1 disables this feature.
+
   wait-for-new-position-ms:
     type: int
     default: 30
