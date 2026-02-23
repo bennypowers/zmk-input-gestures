@@ -96,6 +96,23 @@ properties:
       to activate.
       The default value is a good compromise that works for me.
 
+  tap-to-drag:
+    type: boolean
+    description: |
+      After a tap, hold the button press briefly and wait for a second
+      touch.  If a second touch begins within tap-drag-window-ms, the
+      button stays held and finger movement drags.  The button is
+      released when the drag touch ends.  If no second touch arrives,
+      the button is released after the window expires.
+  tap-drag-window-ms:
+    type: int
+    default: 200
+    description: |
+      How long (in milliseconds) to wait for a second touch after a tap
+      before releasing the button.  Only used when tap-to-drag is
+      enabled.  A longer value gives more time to start a drag but
+      delays single-tap release.
+
   tap-right-click-layer:
     type: int
     default: -1
